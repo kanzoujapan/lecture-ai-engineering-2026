@@ -32,6 +32,42 @@ uv run python -m app.ask "LoRAとは何ですか？"
 
 詳しい手順は [lectures/01/problem.md](lectures/01/problem.md) を見てください。
 
+## 第1回の発展課題をローカルPCで実行する
+
+1. リポジトリ直下の `.env` を開き、`GEMINI_API_KEY=` の右側に取得済みのキーを入力して保存します。別の環境では `.env.example` を `.env` にコピーしてください。`.env` は Git の管理対象外です。
+2. [Google AI Studio](https://aistudio.google.com/) で、使用するプロジェクトのモデル別の利用枠・料金区分を確認します。既定の比較対象は `gemini-3.5-flash-lite` と `gemini-3.1-flash-lite` です。利用できるモデルはプロジェクトによって異なります。
+3. リポジトリ直下のターミナルで実行します。
+
+```bash
+# 初回のみ: 固定済みの依存パッケージをインストール
+uv sync --frozen
+
+# 実行計画の確認。APIキー不要で、通信も行わない
+uv run python -m app.benchmark --dry-run
+
+# 2モデル × 3質問 × 各3回 = 最大18回。通常は数分かかる
+uv run --env-file .env python -m app.benchmark
+```
+
+完了後に表示される `lectures/01/results/<実行日時>/summary.md` に比較表ができます。同じフォルダの `results.jsonl` に回答全文と各回の数値、`run.json` に実験条件を保存します。比較表と講座固有の質問への回答を [answer.md](lectures/01/answer.md) に転記し、実測に基づく考察を追記してください。
+
+質問を変更する場所は `app/benchmark.py` の `QUESTIONS` です。モデル・開始間隔なども指定できます。
+
+```bash
+uv run --env-file .env python -m app.benchmark \
+  --models gemini-3.5-flash-lite gemini-3.1-flash-lite \
+  --repeats 3 --interval 30 --temperature 1.0 --max-output-tokens 2048
+
+# 1つの質問だけ試す場合（この呼び出しも利用枠を消費する）
+uv run --env-file .env python -m app.ask "LoRAとは何ですか？"
+```
+
+既定の開始間隔は最低15秒で、無料枠内で実行できることを保証する設定ではありません。429・通信エラーなどでは途中までの結果を保存して停止します。上限は [公式のレート制限の説明](https://ai.google.dev/gemini-api/docs/rate-limits) と AI Studio で確認してください。日単位の上限や利用枠が0の場合、1分待つだけでは解消しません。
+
+`MAX_TOKENS`・空回答などの未完了応答は保存しますが、完了応答の平均には含めません。出力上限を増やす場合は、両モデルを同じ条件で再測定します。Ctrl+C でも受信済みの結果を保存します。再実行は別フォルダに保存され、過去の結果を上書きしません。
+
+Codespaces secret が設定済みなら、`--env-file .env` は不要です。
+
 ## 構成
 
 ```
@@ -68,14 +104,14 @@ pyproject.toml / uv.lock  依存パッケージとその固定版
 
 - **依存パッケージの版は固定**しています（`uv.lock`。Python 3.12、pydantic-ai-slim 2.57.0、google-genai 2.31.0）。講座の期間中は上げません。`uv sync --frozen` でそのまま入れてください。
 - **既定のモデルは `gemini-3.5-flash-lite`** です。環境変数 `AIE_MODEL` で切り替えられます（下の「モデルの切り替え」）。ほかのモデルや自前契約の API を使ってもかまいません
-- **Gemini API の無料枠にはレート制限**があります。エージェント（第3回以降）は 1 つの質問で LLM を複数回呼ぶので、第1回より早く上限に達します。`レート制限に達しました` と出たら 1 分ほど待ってください。`モデルが混み合っています（503）` が続くときは `AIE_MODEL=gemini-3.1-flash-lite` を試してください
+- **Gemini API の無料枠にはレート制限**があります。エージェント（第3回以降）は 1 つの質問で LLM を複数回呼ぶので、第1回より早く上限に達します。429が出たら AI Studio で利用枠を確認し、分単位なら間隔を空け、日単位ならリセットを待ってください。`モデルが混み合っています（503）` が続くときは `AIE_MODEL=gemini-3.1-flash-lite` を試してください
 - **API キーは環境変数 `GEMINI_API_KEY` だけ**で渡します。コード・コミット・チャットに貼らないでください。漏れたら AI Studio で削除して作り直します
 - Codespaces からインターネットへは出られますが、外から Codespaces の中へは接続できません（ポート転送は既定で非公開）。第5回の MCP サーバーは Codespaces の中で動かします
 - テスト（`uv run pytest -q`）は API キーなしで動きます（LLM を呼ばない TestModel を使用）
 
 ## 守ってほしいこと
 
-- **APIキーをコードやコミットに書かない。** Codespaces secret で渡します
+- **APIキーをコードやコミットに書かない。** Codespaces secret、または Git 管理対象外のローカル `.env` から環境変数として渡します
 - **使い終わったら Codespaces を停止する。** 無料枠を使い切ると起動できなくなります
 - AIツール（Copilot など）は使ってかまいません。提案されたコードは、読んで理解してから採用してください
 
