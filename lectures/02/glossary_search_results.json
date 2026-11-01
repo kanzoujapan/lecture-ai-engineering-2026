@@ -1,0 +1,125 @@
+[
+  {
+    "category": "known",
+    "expected_id": "lora",
+    "question": "LoRAの仕組みを説明してください。",
+    "output": "[{\"term\": \"LoRA\", \"lecture\": 2, \"definition\": \"事前学習済みの重みは固定したまま、重みの更新分を2つの小さな行列の積（低ランク行列）で表し、その小さな行列だけを学習するPEFT手法。学習するパラメータが少なく、学習結果（アダプタ）も小さいファイルで保存できる。本講座の第2回演習ではLoRAを扱う。\", \"related\": [\"peft\", \"lora-rank\", \"qlora\"]}]",
+    "matched_terms": [
+      "LoRA"
+    ]
+  },
+  {
+    "category": "known",
+    "expected_id": "token",
+    "question": "トークンとはどのようなものですか？",
+    "output": "[{\"term\": \"トークン\", \"lecture\": 1, \"definition\": \"LLMがテキストを扱う最小単位。単語や文字の断片に分割される。APIの料金、レート制限、コンテキストウィンドウの大きさは、多くの場合トークン数で数える。日本語は英語より1文字あたりのトークン数が多くなりやすい。\", \"related\": [\"context-window\", \"rate-limit\"]}]",
+    "matched_terms": [
+      "トークン"
+    ]
+  },
+  {
+    "category": "known",
+    "expected_id": "overfitting",
+    "question": "過学習はどんな状態ですか？",
+    "output": "[{\"term\": \"過学習\", \"lecture\": 2, \"definition\": \"学習データにだけ過度に適合し、未知の入力に対する性能が落ちる状態。学習に使わない検証データで性能を測って気づく。\", \"related\": [\"epoch\", \"evaluation-loop\"]}]",
+    "matched_terms": [
+      "過学習"
+    ]
+  },
+  {
+    "category": "known",
+    "expected_id": "mcp",
+    "question": "MCPについて教えてください。",
+    "output": "[{\"term\": \"MCP（Model Context Protocol）\", \"lecture\": 3, \"definition\": \"AIアプリと外部のツールやデータソースをつなぐためのオープンな標準プロトコル。MCPサーバーとして公開したツールは、対応する様々なエージェントやエディタ（MCPクライアント）から共通の方法で使える。第5回で、用語集の検索をMCPサーバーにして体験する。\", \"related\": [\"tool\", \"ai-agent\", \"mcp-server\", \"mcp-client\"]}]",
+    "matched_terms": [
+      "MCP（Model Context Protocol）"
+    ]
+  },
+  {
+    "category": "known",
+    "expected_id": "api-key",
+    "question": "APIキーの意味を教えてください。",
+    "output": "[{\"term\": \"API\", \"lecture\": 1, \"definition\": \"プログラムから別のサービスの機能を呼び出すための窓口。本講座ではGemini APIをPythonから呼び出してLLMを使う。\", \"related\": [\"api-key\", \"rate-limit\"]}, {\"term\": \"APIキー\", \"lecture\": 1, \"definition\": \"APIを呼び出す人を識別するための秘密の文字列。漏れると他人に利用枠を使われるため、コードに直接書かない、コミットしない、チャットに貼らない。本講座ではCodespaces secretに登録し、環境変数 GEMINI_API_KEY として読み込む。\", \"related\": [\"codespaces-secret\", \"environment-variable\"]}]",
+    "matched_terms": [
+      "API",
+      "APIキー"
+    ]
+  },
+  {
+    "category": "paraphrase",
+    "expected_id": "lora",
+    "question": "Low-Rank Adaptationはどんな方法ですか？",
+    "output": "[{\"term\": \"LoRA\", \"lecture\": 2, \"definition\": \"事前学習済みの重みは固定したまま、重みの更新分を2つの小さな行列の積（低ランク行列）で表し、その小さな行列だけを学習するPEFT手法。学習するパラメータが少なく、学習結果（アダプタ）も小さいファイルで保存できる。本講座の第2回演習ではLoRAを扱う。\", \"related\": [\"peft\", \"lora-rank\", \"qlora\"]}, {\"term\": \"ランク（LoRAのr）\", \"lecture\": 2, \"definition\": \"LoRAで使う低ランク行列の大きさを決めるハイパーパラメータ。大きいほど表現力が上がるが、学習するパラメータとメモリも増える。\", \"related\": [\"lora\"]}]",
+    "matched_terms": [
+      "LoRA",
+      "ランク（LoRAのr）"
+    ]
+  },
+  {
+    "category": "paraphrase",
+    "expected_id": "context-window",
+    "question": "コンテキスト長が表す上限を教えて。",
+    "output": "[{\"term\": \"コンテキストウィンドウ\", \"lecture\": 1, \"definition\": \"LLMが1回の呼び出しで扱える入力と出力の合計トークン数の上限。会話履歴やツールの結果もこの中に収める必要があるため、何をモデルに渡すかの設計が重要になる。\", \"related\": [\"token\", \"agent-loop\"]}]",
+    "matched_terms": [
+      "コンテキストウィンドウ"
+    ]
+  },
+  {
+    "category": "paraphrase",
+    "expected_id": "sft",
+    "question": "SFTはどのようなデータを使いますか？",
+    "output": "[{\"term\": \"教師ありファインチューニング（SFT）\", \"lecture\": 2, \"definition\": \"入力と望ましい出力のペア（例：質問と模範回答）を使ってモデルを追加学習させる方法。指示に従う振る舞いを身につけさせる代表的な手法。\", \"related\": [\"fine-tuning\", \"lora\"]}]",
+    "matched_terms": [
+      "教師ありファインチューニング（SFT）"
+    ]
+  },
+  {
+    "category": "paraphrase",
+    "expected_id": "hallucination",
+    "question": "AIの幻覚とは何を指しますか？",
+    "output": "用語集に「AIの幻覚とは何を指しますか？」は見つかりませんでした。",
+    "matched_terms": []
+  },
+  {
+    "category": "paraphrase",
+    "expected_id": "epoch",
+    "question": "学習データを1周する単位を説明してください。",
+    "output": "用語集に「学習データを1周する単位を説明してください。」は見つかりませんでした。",
+    "matched_terms": []
+  },
+  {
+    "category": "absent",
+    "expected_id": null,
+    "question": "講座独自の架空用語「青い学習回廊」とは何ですか？",
+    "output": "用語集に「講座独自の架空用語「青い学習回廊」とは何ですか？」は見つかりませんでした。",
+    "matched_terms": []
+  },
+  {
+    "category": "absent",
+    "expected_id": null,
+    "question": "講座独自の架空用語「白い推論羅針盤」を説明してください。",
+    "output": "用語集に「講座独自の架空用語「白い推論羅針盤」を説明してください。」は見つかりませんでした。",
+    "matched_terms": []
+  },
+  {
+    "category": "absent",
+    "expected_id": null,
+    "question": "講座独自の架空用語「月光プロトコル」はどのような仕組みですか？",
+    "output": "用語集に「講座独自の架空用語「月光プロトコル」はどのような仕組みですか？」は見つかりませんでした。",
+    "matched_terms": []
+  },
+  {
+    "category": "absent",
+    "expected_id": null,
+    "question": "講座独自の架空用語「黄金モデル鏡」とは何ですか？",
+    "output": "用語集に「講座独自の架空用語「黄金モデル鏡」とは何ですか？」は見つかりませんでした。",
+    "matched_terms": []
+  },
+  {
+    "category": "absent",
+    "expected_id": null,
+    "question": "講座独自の架空用語「虹色の重み地図」は何に使いますか？",
+    "output": "用語集に「講座独自の架空用語「虹色の重み地図」は何に使いますか？」は見つかりませんでした。",
+    "matched_terms": []
+  }
+]
