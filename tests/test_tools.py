@@ -2,6 +2,8 @@
 
 import json
 
+import pytest
+
 from app import tools
 
 
@@ -46,3 +48,17 @@ def test_default_question_of_lecture1_is_answerable_from_glossary():
     assert "3レベル" in DEFAULT_QUESTION
     hits = json.loads(tools.search_glossary("3レベル"))
     assert hits[0]["term"] == "宿題の3レベル"
+
+
+@pytest.mark.parametrize("lecture", [1, 2, 3, 5])
+def test_quiz_uses_a_term_and_answer_from_the_requested_lecture(lecture):
+    quiz = json.loads(tools.make_quiz(lecture))
+    entry = next(term for term in tools.load_glossary() if term["term"] == quiz["term"])
+    assert quiz["lecture"] == entry["lecture"] == lecture
+    assert quiz["term"] in quiz["question"]
+    assert quiz["answer"] == entry["definition"]
+
+
+@pytest.mark.parametrize("lecture", [0, -1, 4, 99])
+def test_quiz_does_not_invent_terms_for_an_unavailable_lecture(lecture):
+    assert "用語はまだありません" in tools.make_quiz(lecture)
