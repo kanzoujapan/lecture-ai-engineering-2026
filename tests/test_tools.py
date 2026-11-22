@@ -46,3 +46,17 @@ def test_default_question_of_lecture1_is_answerable_from_glossary():
     assert "3レベル" in DEFAULT_QUESTION
     hits = json.loads(tools.search_glossary("3レベル"))
     assert hits[0]["term"] == "宿題の3レベル"
+
+
+def test_quiz_tree_returns_only_requested_pages_in_request_order():
+    data = json.loads(tools.lookup_quizzes(2, [4, 2, 4, 5]))
+    assert data["missing_numbers"] == [5]
+    assert [(p["page_id"], p["quiz_number"], p["role"]) for p in data["results"]] == [
+        ("lec02-main-p056", 4, "設問"), ("lec02-main-p057", 4, "解説"),
+        ("lec02-main-p026", 2, "設問"), ("lec02-main-p027", 2, "解説"),
+    ]
+    assert all(p["content"] for p in data["results"])
+
+
+def test_quiz_tree_does_not_take_a_quiz_from_another_lecture():
+    assert json.loads(tools.lookup_quizzes(1, [2])) == {"results": [], "missing_numbers": [2]}
