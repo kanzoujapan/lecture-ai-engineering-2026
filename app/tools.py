@@ -98,6 +98,19 @@ def search_materials(query: str) -> str:
         return json.dumps({"error": api_error_message(e.code), "results": []}, ensure_ascii=False)
 
 
+def lookup_quizzes(lecture: int, numbers: list[int]) -> str:
+    """利用者が指定した講義回とクイズ番号を引き、設問・解説の本文と引用ページを返す。
+
+    numbers には同じ講義で調べたい番号をまとめる。missing_numbers は該当する見出しがない番号。
+    """
+    from app.retrieval import lookup_quizzes as lookup
+
+    try:
+        return json.dumps(lookup(lecture, numbers), ensure_ascii=False)
+    except (ValueError, OSError) as e:
+        return json.dumps({"error": str(e), "results": []}, ensure_ascii=False)
+
+
 def browse_tree(node_id: str | None = None) -> str:
     """目次とページの先頭文を返す。ページIDを指定すると全文を返す。
 

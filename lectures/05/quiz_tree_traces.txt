@@ -1,0 +1,278 @@
+===== Q1 / 基本RAG / 1回目 =====
+
+[model] gemini-3.5-flash-lite
+第2回のクイズ2とクイズ4の内容について、それぞれ講義が勧めた最初の打ち手とその理由を説明します。
+
+---
+
+### クイズ2：どこを動かす？
+* **場面**：チャットボットが、今年発表された新しい手法について聞かれると、古い情報で答えてしまう状況（第2回・PDF p.26）
+* **最初の打ち手**：**新しい資料を検索して渡す。必要なら新しいモデルを選ぶ（選択肢C）**（第2回・PDF p.27）
+* **理由**：原因は知識の締め切りであり、どれだけ考えさせても知らないことは出力されないため、資料を渡す（RAG）か新しいモデルを選ぶ必要があるから（第2回・PDF p.27）
+
+---
+
+### クイズ4：Fine-Tuning が一番向いているのは？
+* **場面**：講義チャットボットで直したいことが4つあるうち、Fine-Tuningが最も向いているものを選ぶ状況（第2回・PDF p.56）
+* **最初の打ち手**：**回答を、必ず決まった JSON 形式で返させる（選択肢B）**（第2回・PDF p.57）
+* **理由**：形式は「振る舞い」であり手本で変わるため（実務ではまずプロンプトや構造化出力を使う）。他の選択肢のうち「課題の締切」や「新しい内容」は知識なのでRAGが向いており、「難しい計算問題」は推論時計算かモデル選びが向いているから（第2回・PDF p.57）
+
+--- trace ---
+[tool call]   search_materials({'query': 'クイズ2'})
+[tool call]   search_materials({'query': 'クイズ4'})
+[tool return] search_materials -> ['lec02-main-p016', 'lec02-main-p017', 'lec02-main-p027', 'lec02-main-p026', 'lec02-main-p042']
+[tool return] search_materials -> ['lec02-main-p057', 'lec02-main-p016', 'lec02-main-p056', 'lec02-main-p042', 'lec02-main-p017']
+[time] 回答完了まで 3.41 秒（検索・埋め込みを含む）
+[usage] 入力 3,846 tokens / 出力 392 tokens / モデル応答 2 回
+[cost] 生成APIの推定コスト: $0.002134 USD（埋め込み・索引構築分は含まない）
+
+===== Q1 / 基本RAG / 2回目 =====
+
+[model] gemini-3.5-flash-lite
+第2回の講義資料に基づき、クイズ2とクイズ4の場面における最初の打ち手とその理由を説明します。
+
+---
+
+### クイズ2：どこを動かす？
+* **場面**：チャットボットが、今年発表された新しい手法について聞かれると、古い情報で答えてしまう（第2回・PDF p.27）。
+* **最初の打ち手**：**新しい資料を検索して渡す。必要なら新しいモデルを選ぶ**（選択肢C）（第2回・PDF p.27）
+* **理由**：
+  * 原因が「知識の締め切り」にあるため、いくら考えさせても知らない情報が出てくることはないため（第2回・PDF p.27）。
+  * 知識不足に対しては、資料を渡す（RAG）か新しいモデルを選ぶことが適切な打ち手となる（第2回・PDF p.27）。
+
+---
+
+### クイズ4：Fine-Tuning が一番向いているのは？
+* **場面**：講義チャットボットで直したいことが4つあるうち、Fine-Tuningが最も向いているものを探す（第2回・PDF p.56, p.57）。
+* **最初の打ち手**：**回答を、必ず決まった JSON 形式で返させる**（選択肢B）（第2回・PDF p.57）
+* **理由**：
+  * 「形式（出力フォーマットなど）」の制御はモデルの「振る舞い」にあたり、手本を示すことで変わるため（実務ではまずプロンプトや構造化出力で対応する）（第2回・PDF p.57）。
+  * 一方で、知識の追加（課題の締切や新しい内容）はRAGが向いており、難しい計算問題の正答率向上には推論時計算やモデル選びが適している（第2回・PDF p.57）。
+
+--- trace ---
+[tool call]   search_materials({'query': '第2回 クイズ2 最初の打ち手'})
+[tool return] search_materials -> ['lec02-main-p027', 'lec02-main-p017', 'lec02-main-p016', 'lec02-main-p029', 'lec02-main-p026']
+[tool call]   search_materials({'query': '第2回 クイズ4 最初の打ち手'})
+[tool return] search_materials -> ['lec02-main-p029', 'lec02-main-p027', 'lec02-main-p016', 'lec02-main-p017', 'lec02-main-p042']
+[tool call]   search_materials({'query': '第2回 クイズ4 答え'})
+[tool return] search_materials -> ['lec02-main-p057', 'lec02-main-p056', 'lec02-main-p017', 'lec02-main-p027', 'lec02-main-p016']
+[time] 回答完了まで 7.40 秒（検索・埋め込みを含む）
+[usage] 入力 11,218 tokens / 出力 495 tokens / モデル応答 4 回
+[cost] 生成APIの推定コスト: $0.004603 USD（埋め込み・索引構築分は含まない）
+
+===== Q1 / 改良版 / 1回目 =====
+
+[model] gemini-3.5-flash-lite
+第2回のクイズ2とクイズ4について、それぞれの場面における最初の打ち手とその理由を整理します。
+
+### クイズ2：古い情報で答えてしまうチャットボットへの打ち手
+* **最初の打ち手**
+  * **C：新しい資料を検索して渡す。必要なら新しいモデルを選ぶ**
+* **理由**
+  * 原因は「知識の締め切り」であり、どれだけ考えさせてもモデルが知らない情報は出力されないためです。そのため、知識は（Fine-Tuningではなく）資料を渡す（RAG）か、新しいモデルを選ぶことで対応します（第2回・PDF p.26-27）。
+
+---
+
+### クイズ4：Fine-Tuningが一番向いている場面への打ち手
+* **最初の打ち手（Fine-Tuningが向いている選択肢）**
+  * **B：回答を、必ず決まった JSON 形式で返させる**
+* **理由**
+  * JSON形式のような出力の「形式」はモデルの**振る舞い**にあたり、手本を示すFine-Tuning（FT）で対応するのが最も向いているためです（実務ではまずプロンプトや構造化出力を用います）。
+  * なお、他の選択肢（Aの毎年変わる締切、Cの新しい内容）は「知識」であるためまずRAGが向いており、Dの難しい計算問題は「推論時計算かモデル選び」で対応します（第2回・PDF p.56-57）。
+
+--- trace ---
+[tool call]   lookup_quizzes({'numbers': [2, 4], 'lecture': 2})
+[tool return] lookup_quizzes -> ['lec02-main-p026', 'lec02-main-p027', 'lec02-main-p056', 'lec02-main-p057']
+[time] 回答完了まで 2.96 秒（検索・埋め込みを含む）
+[usage] 入力 2,172 tokens / 出力 350 tokens / モデル応答 2 回
+[cost] 生成APIの推定コスト: $0.001527 USD（埋め込み・索引構築分は含まない）
+
+===== Q1 / 改良版 / 2回目 =====
+
+[model] gemini-3.5-flash-lite
+第2回のクイズ2とクイズ4について、それぞれの場面における最初の打ち手とその理由を整理します。
+
+---
+
+### クイズ 2 ：どこを動かす？
+* **場面**: チャットボットが、今年発表された新しい手法について聞かれると、古い情報で答えてしまう（第2回・PDF p.26）
+* **最初の打ち手**: **C 新しい資料を検索して渡す。必要なら新しいモデルを選ぶ**（第2回・PDF p.27）
+* **理由**: 原因は「知識の締め切り」であり、いくら考えさせても知らないことは出力されないため、資料を渡す（RAG）か新しいモデルを選ぶのが適切なため（第2回・PDF p.27）。
+
+---
+
+### クイズ 4 ： Fine-Tuning が一番向いているのは？
+* **場面**: 講義チャットボットで直したいことが4つあるうち、Fine-Tuningが最も向いているものを選ぶ（第2回・PDF p.56）
+* **最初の打ち手**: **B 回答を、必ず決まった JSON 形式で返させる**（第2回・PDF p.57）
+* **理由**: 出力形式などの「振る舞い」は手本を示すことで変えられる（実務ではまずプロンプトや構造化出力を用いる）ため。なお、AやCの知識不足にはRAG、Dの難しい計算問題には推論時計算やモデル選びが適している（第2回・PDF p.57）。
+
+--- trace ---
+[tool call]   lookup_quizzes({'lecture': 2, 'numbers': [2, 4]})
+[tool return] lookup_quizzes -> ['lec02-main-p026', 'lec02-main-p027', 'lec02-main-p056', 'lec02-main-p057']
+[time] 回答完了まで 5.91 秒（検索・埋め込みを含む）
+[usage] 入力 2,172 tokens / 出力 356 tokens / モデル応答 2 回
+[cost] 生成APIの推定コスト: $0.001542 USD（埋め込み・索引構築分は含まない）
+
+===== Q2 / 基本RAG / 1回目 =====
+
+[model] gemini-3.5-flash-lite
+第2回講義資料の付録ページに、1講義200問の場合の費用やトークン数に関する試算が掲載されています。
+
+- **入力と出力の合計トークン数**（1講義・200問あたり）
+  - 入力の合計：40万トークン（1問の入力 2,000 トークン × 200問）
+  - 出力の合計：10万トークン（1問の出力 500 トークン × 200問）
+- **小さいモデルでの試算金額**
+  - 約 $0.2（仮の単価：100万トークンあたり入力 $0.25 / 出力 $1.25 で計算）
+
+（出典：第2回・PDF p.70）
+
+--- trace ---
+[tool call]   search_materials({'query': '200問 小さいモデル 約 いくら 試算 入力 出力 トークン'})
+[tool return] search_materials -> ['lec02-main-p070', 'lec02-main-p049', 'lec02-main-p009', 'lec02-main-p069', 'lec02-main-p043']
+[time] 回答完了まで 4.47 秒（検索・埋め込みを含む）
+[usage] 入力 2,816 tokens / 出力 217 tokens / モデル応答 2 回
+[cost] 生成APIの推定コスト: $0.001387 USD（埋め込み・索引構築分は含まない）
+
+===== Q2 / 基本RAG / 2回目 =====
+
+[model] gemini-3.5-flash-lite
+第2回講義資料の付録ページに、1講義200問の場合の試算が掲載されています。
+
+- **入力の合計トークン数**：40万トークン（1問の入力2,000トークン × 200問）
+- **出力の合計トークン数**：10万トークン（1問の出力500トークン × 200問）
+- **小さいモデルでの試算金額**：約 $0.2
+
+（出典：第2回・PDF p.70）
+
+--- trace ---
+[tool call]   search_materials({'query': '200問 小さいモデル 約 いくら 試算 入力 出力 トークン'})
+[tool return] search_materials -> ['lec02-main-p070', 'lec02-main-p049', 'lec02-main-p009', 'lec02-main-p069', 'lec02-main-p043']
+[time] 回答完了まで 2.64 秒（検索・埋め込みを含む）
+[usage] 入力 2,816 tokens / 出力 160 tokens / モデル応答 2 回
+[cost] 生成APIの推定コスト: $0.001245 USD（埋め込み・索引構築分は含まない）
+
+===== Q2 / 改良版 / 1回目 =====
+
+[model] gemini-3.5-flash-lite
+第2回の講義資料によると、200問に答える場合の試算は以下のようになっています。
+
+* **小さいモデルでのコスト**：約 $0.2（1講義あたり）
+* **入力と出力の合計トークン数**：
+  * 入力の合計：40万トークン（1問の入力 2,000 トークン × 200問）
+  * 出力の合計：10万トークン（1問の出力 500 トークン × 200問）
+  * 合計トークン数：50万トークン
+
+（出典：第2回・PDF p.70）
+
+--- trace ---
+[tool call]   lookup_quizzes({'numbers': [3], 'lecture': 2})
+[tool return] lookup_quizzes -> ['lec02-main-p042', 'lec02-main-p043']
+[tool call]   search_materials({'query': '200問 小さいモデル 試算 コスト トークン'})
+[tool return] search_materials -> ['lec02-main-p070', 'lec02-main-p049', 'lec02-main-p009', 'lec02-main-p043', 'lec02-main-p069']
+[time] 回答完了まで 4.38 秒（検索・埋め込みを含む）
+[usage] 入力 4,980 tokens / 出力 197 tokens / モデル応答 3 回
+[cost] 生成APIの推定コスト: $0.001986 USD（埋め込み・索引構築分は含まない）
+
+===== Q2 / 改良版 / 2回目 =====
+
+[model] gemini-3.5-flash-lite
+第2回の講義資料によると、200問の場合の試算結果および入力・出力の合計トークン数は以下の通りです。
+
+- **小さいモデルでの費用試算**：約 $0.2（1講義あたり）
+- **入力の合計トークン数**：40万トークン（1問の入力 2,000 トークン × 200 問）
+- **出力の合計トークン数**：10万トークン（1問の出力 500 トークン × 200 問）
+
+出典：第2回・PDF p.70
+
+--- trace ---
+[tool call]   lookup_quizzes({'lecture': 2, 'numbers': [3]})
+[tool return] lookup_quizzes -> ['lec02-main-p042', 'lec02-main-p043']
+[tool call]   search_materials({'query': '200問 小さいモデル 試算 コスト トークン'})
+[tool return] search_materials -> ['lec02-main-p070', 'lec02-main-p049', 'lec02-main-p009', 'lec02-main-p043', 'lec02-main-p069']
+[time] 回答完了まで 4.56 秒（検索・埋め込みを含む）
+[usage] 入力 4,980 tokens / 出力 185 tokens / モデル応答 3 回
+[cost] 生成APIの推定コスト: $0.001956 USD（埋め込み・索引構築分は含まない）
+
+===== Q3 / 基本RAG / 1回目 =====
+
+[model] gemini-3.5-flash-lite
+第2回の講義資料を確認したところ、クイズはクイズ1からクイズ4まで（全4問）となっており、ご質問にある「クイズ5」や「問い合わせ分類器の本番正答率」に関する実測値の記載は見つかりませんでした。
+
+第2回資料では、クイズは全4問（クイズ1〜4）のみ確認できます（第2回・PDF p.16〜17, 26〜27, 42〜43, 56〜57）。したがって、資料から確認できる実測値はありません。
+
+--- trace ---
+[tool call]   search_materials({'query': 'クイズ5 問い合わせ分類器 正答率'})
+[tool return] search_materials -> ['lec02-main-p043', 'lec02-main-p042', 'lec02-main-p057', 'lec02-main-p056', 'lec02-main-p017']
+[tool call]   search_materials({'query': '問い合わせ分類器'})
+[tool return] search_materials -> ['lec02-main-p042', 'lec02-main-p043', 'lec02-main-p041', 'lec02-main-p019', 'lec02-main-p027']
+[tool call]   search_materials({'query': '第2回 クイズ5'})
+[tool return] search_materials -> ['lec02-main-p017', 'lec02-main-p016', 'lec02-main-p057', 'lec02-main-p027', 'lec02-main-p026']
+[time] 回答完了まで 13.29 秒（検索・埋め込みを含む）
+[usage] 入力 11,405 tokens / 出力 192 tokens / モデル応答 4 回
+[cost] 生成APIの推定コスト: $0.003902 USD（埋め込み・索引構築分は含まない）
+
+===== Q3 / 基本RAG / 2回目 =====
+
+[model] gemini-3.5-flash-lite
+第2回の講義資料を確認しましたが、「問い合わせ分類器」という名称のクイズ、あるいは本番正答率を問うクイズ（クイズ5）の記載は見当たりません。
+
+第2回にはクイズが4つ掲載されており（第2回・PDF p.16、p.26、p.42、p.57）、問い合わせに関する内容はクイズ3（1日1万件の振り分け）がありますが、そこにも本番正答率の実測値についての記載はありません。
+
+そのため、ご質問にある問い合わせ分類器の本番正答率は、確認できません。
+
+--- trace ---
+[tool call]   search_materials({'query': '第2回 クイズ5 問い合わせ分類器 本番 正答率'})
+[tool return] search_materials -> ['lec02-main-p043', 'lec02-main-p042', 'lec02-main-p057', 'lec02-main-p016', 'lec02-main-p017']
+[tool call]   search_materials({'query': 'クイズ5'})
+[tool return] search_materials -> ['lec02-main-p016', 'lec02-main-p017', 'lec02-main-p057', 'lec02-main-p042', 'lec02-main-p027']
+[tool call]   search_materials({'query': '問い合わせ分類器'})
+[tool return] search_materials -> ['lec02-main-p042', 'lec02-main-p043', 'lec02-main-p041', 'lec02-main-p019', 'lec02-main-p027']
+[tool call]   search_materials({'query': '第2回 本番 正答率 クイズ'})
+[tool return] search_materials -> ['lec02-main-p017', 'lec02-main-p016', 'lec02-main-p026', 'lec02-main-p027', 'lec02-main-p057']
+[tool call]   search_materials({'query': '正答率'})
+[tool return] search_materials -> ['lec02-main-p017', 'lec02-main-p016', 'lec02-main-p039', 'lec02-main-p013', 'lec03-main-p019']
+[time] 回答完了まで 26.92 秒（検索・埋め込みを含む）
+[usage] 入力 27,248 tokens / 出力 238 tokens / モデル応答 6 回
+[cost] 生成APIの推定コスト: $0.006034 USD（埋め込み・索引構築分は含まない）
+
+===== Q3 / 改良版 / 1回目 =====
+
+[model] gemini-3.5-flash-lite
+第2回の資料を確認いたしましたが、第2回にはクイズが4問（クイズ1〜4）しか掲載されておらず、ご質問にある「クイズ5」および問い合わせ分類器の本番正答率に関する実測値の記載は見当たりませんでした（第2回・PDF p.16, 27, 42-43, 56-57）。
+
+そのため、現時点の講義資料からは該当する実測値を確認できません。
+
+--- trace ---
+[tool call]   lookup_quizzes({'numbers': [5], 'lecture': 2})
+[tool return] lookup_quizzes -> []
+   該当しない番号: [5]
+[tool call]   search_materials({'query': '問い合わせ分類器 正答率'})
+[tool return] search_materials -> ['lec02-main-p043', 'lec02-main-p042', 'lec02-main-p039', 'lec03-main-p046', 'lec02-main-p060']
+[tool call]   search_materials({'query': 'クイズ5 問い合わせ'})
+[tool return] search_materials -> ['lec02-main-p042', 'lec02-main-p043', 'lec02-main-p027', 'lec02-main-p016', 'lec02-main-p057']
+[tool call]   search_materials({'query': '分類器 正答率'})
+[tool return] search_materials -> ['lec02-main-p043', 'lec02-main-p042', 'lec02-main-p039', 'lec02-main-p060', 'lec02-main-p017']
+[time] 回答完了まで 9.89 秒（検索・埋め込みを含む）
+[usage] 入力 13,006 tokens / 出力 183 tokens / モデル応答 5 回
+[cost] 生成APIの推定コスト: $0.004359 USD（埋め込み・索引構築分は含まない）
+
+===== Q3 / 改良版 / 2回目 =====
+
+[model] gemini-3.5-flash-lite
+第2回の資料を確認いたしましたが、第2回に「クイズ5」という設問は存在しません（第2回のクイズはクイズ1〜4までです）。そのため、ご質問にある問い合わせ分類器の本番正答率について、資料で確認できる実測値は記載されていません。
+
+（参考として、第2回資料ではクイズ3（p.42-43）などで「受講生からの問い合わせ（1日1万件）の振り分け」を題材とした問題が扱われていますが、そこにも具体的な本番正答率の実測値は記載されていません。）
+
+--- trace ---
+[tool call]   lookup_quizzes({'lecture': 2, 'numbers': [5]})
+[tool return] lookup_quizzes -> []
+   該当しない番号: [5]
+[tool call]   search_materials({'query': '問い合わせ分類器 本番正答率'})
+[tool return] search_materials -> ['lec02-main-p043', 'lec02-main-p042', 'lec02-main-p039', 'lec02-main-p017', 'lec02-main-p016']
+[tool call]   search_materials({'query': 'クイズ 5'})
+[tool return] search_materials -> ['lec02-main-p016', 'lec02-main-p057', 'lec02-main-p017', 'lec02-main-p042', 'lec02-main-p056']
+[tool call]   search_materials({'query': '問い合わせ分類器'})
+[tool return] search_materials -> ['lec02-main-p042', 'lec02-main-p043', 'lec02-main-p041', 'lec02-main-p019', 'lec02-main-p027']
+[time] 回答完了まで 28.96 秒（検索・埋め込みを含む）
+[usage] 入力 12,492 tokens / 出力 210 tokens / モデル応答 5 回
+[cost] 生成APIの推定コスト: $0.004273 USD（埋め込み・索引構築分は含まない）

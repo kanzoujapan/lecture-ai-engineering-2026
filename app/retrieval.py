@@ -5,6 +5,7 @@ import json
 import math
 import re
 import sqlite3
+import unicodedata
 from contextlib import contextmanager
 from collections import defaultdict, deque
 from pathlib import Path
@@ -74,6 +75,27 @@ def browse_tree(node_id: str | None = None) -> dict:
             }
         remaining.extend(node.get("children", []))
     raise ValueError("対象の目次ノードが見つかりません。")
+
+
+def lookup_quizzes(lecture: int, numbers: list[int]) -> dict:
+    """講義 → クイズ番号 → 設問・解説の順に、該当するページだけを返す。"""
+    by_number = {number: [] for number in numbers}
+    for page in load_pages(RAG_SOURCE):
+        if page["lecture"] != lecture:
+            continue
+        title = unicodedata.normalize("NFKC", page["title"]).strip()
+        match = re.match(r"^クイズ\s*(\d+)\s*:", title)
+        if not match:
+            continue
+        number = int(match[1])
+        if number in by_number:
+            role = "解説" if title.endswith("(答え)") else "設問"
+            by_number[number].append({**page, "quiz_number": number, "role": role})
+
+    return {
+        "results": [page for group in by_number.values() for page in group],
+        "missing_numbers": [number for number, group in by_number.items() if not group],
+    }
 
 
 def read_page(page_id: str) -> dict:
